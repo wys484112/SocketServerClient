@@ -1,8 +1,10 @@
 package com.viroyal.socket.netty;
 
 import java.net.InetSocketAddress;
+import java.nio.charset.Charset;
 import java.util.Scanner;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -21,7 +23,8 @@ public class Client {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
         EventLoopGroup group = new NioEventLoopGroup();
-        ByteArrayEncoder mByteEncoder = new ByteArrayEncoder();
+        final ClientHandler clientHandler = new ClientHandler();
+
         int readIdleTime = 140;
         try {
             Bootstrap b = new Bootstrap();           
@@ -32,7 +35,7 @@ public class Client {
 						@Override
 						protected void initChannel(SocketChannel ch) throws Exception {
 							// TODO Auto-generated method stub
-							ch.pipeline().addLast("idleStateHandler", new IdleStateHandler(readIdleTime, 0, 0));
+//							ch.pipeline().addLast("idleStateHandler", new IdleStateHandler(readIdleTime, 0, 0));
 
 							// Decoders
 //							ch.pipeline().addLast("frameDecoder",
@@ -41,27 +44,37 @@ public class Client {
 							// Encoder
 //							ch.pipeline().addLast("frameEncoder", new LengthFieldPrepender(4));
 							ch.pipeline().addLast("bytesEncoder", new ByteArrayEncoder());
-							ch.pipeline().addLast("decoder", new ClientHandler());
+							ch.pipeline().addLast("decoder", clientHandler);
 						}
 					});
             //连接服务端
-            ChannelFuture connect = b.connect(new InetSocketAddress("localhost", 9701)).sync();
+            ChannelFuture connect = b.connect(new InetSocketAddress("localhost", 9100)).sync();
             Channel channel = connect.channel();
 
             System.out.println("client start");
+//            ByteBuf buf = channel.alloc().buffer();
+//            buf.writeByte(0xAA);
+//          channel.writeAndFlush(buf);
+
             //获取客户端屏幕的写入
-            Scanner scanner = new Scanner(System.in);
-            while(true){
-                System.out.println("请输入");
-                channel.write(scanner.next());
-                channel.flush();
-            }
+
+          
+			Scanner scanner = new Scanner(System.in);
+			while (true) {
+				System.out.println("请输入");
+
+				ByteBuf buf = channel.alloc().buffer();
+				Charset charset = Charset.forName("UTF-8");
+				buf.writeCharSequence(scanner.next(), charset);
+
+				channel.writeAndFlush(buf);
+			}
+            
+            
             
         } catch (InterruptedException e) {  
             e.printStackTrace();  
-        } finally {  
-            group.shutdownGracefully();  
-        }  
+        }
 	}
 
 }

@@ -25,7 +25,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>com.nxet.test.Test</mainClass>
+							<mainClass>com.viroyal.socket.netty.Client</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
