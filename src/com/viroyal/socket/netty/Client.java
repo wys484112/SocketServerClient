@@ -128,7 +128,7 @@ public class Client {
 		});
 
 		channel = connect.channel();
-//		screenSengMessage();
+		screenSengMessage();
 	}
 
 	public void sendMsg(String text) throws Exception {
@@ -149,10 +149,10 @@ public class Client {
 
 	public void screenSengMessage() {
 		while (true) {
-			System.out.println("«Î ‰»Î");
 			Scanner scanner = new Scanner(System.in);
+			System.out.println("«Î ‰»Î");
 			try {
-				sendMsg("aa");
+				sendMsg(scanner.next());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
