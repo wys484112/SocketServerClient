@@ -26,13 +26,12 @@ import io.netty.handler.timeout.IdleStateHandler;
 public class Client {
 	public static int readIdleTime = 60;
 	public static int writeIdleTime = 60;
-	public static int allIdleTime = 60*10;
-	
-	private int Port;
-    private Channel channel;
-	private EventLoopGroup group = new NioEventLoopGroup();
+	public static int allIdleTime = 60 * 10;
+	public static Scanner scanner = new Scanner(System.in);
 
-	private  Scanner scanner = new Scanner(System.in);
+	private int Port;
+	private Channel channel;
+	private EventLoopGroup group;
 
 	public Client(int port) {
 		super();
@@ -40,8 +39,8 @@ public class Client {
 	}
 
 	public void start() {
-//		group.shutdownGracefully();
-//		group = new NioEventLoopGroup();
+		shutdown();
+		group = new NioEventLoopGroup();
 		Bootstrap b = new Bootstrap();
 		try {
 			b.group(group).channel(NioSocketChannel.class).option(ChannelOption.TCP_NODELAY, true)
@@ -50,7 +49,8 @@ public class Client {
 						@Override
 						protected void initChannel(SocketChannel ch) throws Exception {
 							// TODO Auto-generated method stub
-							ch.pipeline().addLast("idleStateHandler", new IdleStateHandler(readIdleTime, writeIdleTime, allIdleTime));
+							ch.pipeline().addLast("idleStateHandler",
+									new IdleStateHandler(readIdleTime, writeIdleTime, allIdleTime));
 
 							// Decoders
 							ch.pipeline().addLast("bytesDecoder", new ByteArrayDecoder());
@@ -60,16 +60,16 @@ public class Client {
 						}
 					});
 			// 连接服务端
-			connect(b,Port);
-			
+			connect(b, Port);
+
 			System.out.println("client start");
-			
+
 		} catch (InterruptedException e) {
 			System.out.println("client InterruptedException");
 
 			e.printStackTrace();
 		} catch (Exception e) {
-//			e.printStackTrace();
+			e.printStackTrace();
 			System.out.println("client Exception");
 			try {
 				Thread.sleep(2000);
@@ -81,7 +81,19 @@ public class Client {
 			// TODO Auto-generated catch block
 		}
 	}
-	
+
+	public void shutdown() {
+		if (group != null) {
+			try {
+				group.shutdownGracefully().sync();
+				System.out.println("shutdown");
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				System.out.println("shutdown Exception");
+			}
+		}
+	}
+
 	public void connect(Bootstrap bootstrap, int port) throws Exception {
 		ChannelFuture connect = bootstrap.connect(new InetSocketAddress("localhost", port)).sync();
 		System.out.println("operationComplete connect");
@@ -92,47 +104,35 @@ public class Client {
 				System.out.println("operationComplete");
 
 				// TODO Auto-generated method stub
-		        if (!future.isSuccess()) {
+				if (!future.isSuccess()) {
 					System.out.println("operationComplete Exception1");
 
-		            final EventLoop loop = future.channel().eventLoop();
-		            loop.schedule(new Runnable() {
-		                @Override
-		                public void run() {
-		                    System.err.println("服务端链接不上，开始重连操作...");
-		                    try {
+					final EventLoop loop = future.channel().eventLoop();
+					loop.schedule(new Runnable() {
+						@Override
+						public void run() {
+							System.err.println("服务端链接不上，开始重连操作...");
+							try {
 								connect(bootstrap, port);
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-		                }
-		            }, 1L, TimeUnit.SECONDS);
-		        } else {
-		            System.err.println("服务端链接成功...");
+						}
+					}, 1L, TimeUnit.SECONDS);
+				} else {
+					System.err.println("服务端链接成功...");
 
-					
-		        }				
-				
-				
+				}
+
 			}
 		});
-		
-		channel = connect.channel();	
-		sendMsg("connected");
 
-		// 获取客户端屏幕的写入
-//		if(scanner!=null) {
-//			scanner.close();
-//		}		
-//		while (true) {
-//			System.out.println("请输入");
-//			sendMsg(scanner.next());
-//		}
+		channel = connect.channel();
 	}
-    
+
 	public void sendMsg(String text) throws Exception {
-//		Thread.sleep(2 * 1000);
+		// Thread.sleep(2 * 1000);
 		ByteBuf buf = channel.alloc().buffer();
 		Charset charset = Charset.forName("UTF-8");
 		buf.writeCharSequence(text, charset);
@@ -146,14 +146,23 @@ public class Client {
 			}
 		});
 	}
-	
+
+	public void screenSengMessage() {
+		while (true) {
+			System.out.println("请输入");
+			try {
+				sendMsg(scanner.next());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
 	@SuppressWarnings("resource")
 	public static void main(String[] args) {
-		Client mClient=new Client(9100);
+		Client mClient = new Client(9100);
 		mClient.start();
 	}
-	
-	
-	
 
 }

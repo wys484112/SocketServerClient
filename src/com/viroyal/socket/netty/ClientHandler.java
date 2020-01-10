@@ -15,10 +15,9 @@ import io.netty.handler.timeout.IdleStateEvent;
 
 public class ClientHandler extends ChannelInboundHandlerAdapter {
 
-	private boolean isRegistered=false;
-	private boolean isActive=false;
-    private Client mClient;
-	
+	private boolean isRegistered = false;
+	private boolean isActive = false;
+	private Client mClient;
 
 	public ClientHandler() {
 		super();
@@ -41,7 +40,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 		// TODO Auto-generated method stub
 		super.channelRegistered(ctx);
 		System.out.println("client channelRegistered");
-		isRegistered=true;
+		isRegistered = true;
 
 	}
 
@@ -50,8 +49,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 		// TODO Auto-generated method stub
 		super.channelUnregistered(ctx);
 		System.out.println("client channelUnregistered");
-		isRegistered=false;
-
+		isRegistered = false;
 
 	}
 
@@ -63,7 +61,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 		System.out.println("client xv");
 
 		ctx.writeAndFlush("aaa");
-		isActive=true;
+		isActive = true;
 
 		// Scanner scanner = new Scanner(System.in);
 		// while(true){
@@ -78,18 +76,36 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 		// TODO Auto-generated method stub
 		super.channelInactive(ctx);
 		System.out.println("client channelInactive");
-		isActive=false;
-		
-	       System.err.println("掉线了...");
-	        //使用过程中断线重连
-	        final EventLoop eventLoop = ctx.channel().eventLoop();
-	        eventLoop.schedule(new Runnable() {
-	            @Override
-	            public void run() {
-	            	mClient.start();
-	            }
-	        }, 1L, TimeUnit.SECONDS);
-	        ctx.close();
+		isActive = false;
+
+		System.err.println("掉线了...");
+		// 使用过程中断线重连 这个方法不可用，close后 ctx上下文已经消失，无法完成定时任务
+		// final EventLoop eventLoop = ctx.channel().eventLoop();
+		// eventLoop.schedule(new Runnable() {
+		// @Override
+		// public void run() {
+		// mClient.shutdown();
+		// System.err.println("掉mClient==null了...");
+		// mClient = new Client(9100);
+		// mClient.start();
+		// }
+		// }, 0L, TimeUnit.SECONDS);
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				mClient.shutdown();
+				if (mClient == null) {
+					System.err.println("掉mClient==null了...");
+					mClient = new Client(ClientCenter.port);
+				}
+
+				mClient.start();
+			}
+		}).start();
+
+		ctx.close();
 
 	}
 
@@ -98,23 +114,23 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 		// TODO Auto-generated method stub
 		super.userEventTriggered(ctx, evt);
 		System.out.println("client userEventTriggered");
-        super.userEventTriggered(ctx, evt);
-        if (evt instanceof IdleStateEvent) {
-            IdleStateEvent event = (IdleStateEvent) evt;
-            if (event.state().equals(IdleState.READER_IDLE)) {
-                System.out.println("长期没收到服务器推送数据");
-                //可以选择重新连接
-            } else if (event.state().equals(IdleState.WRITER_IDLE)) {
-                System.out.println("长期未向服务器发送数据");
-                //发送心跳包
+		super.userEventTriggered(ctx, evt);
+		if (evt instanceof IdleStateEvent) {
+			IdleStateEvent event = (IdleStateEvent) evt;
+			if (event.state().equals(IdleState.READER_IDLE)) {
+				System.out.println("长期没收到服务器推送数据");
+				// 可以选择重新连接
+			} else if (event.state().equals(IdleState.WRITER_IDLE)) {
+				System.out.println("长期未向服务器发送数据");
+				// 发送心跳包
 				ByteBuf buf = ctx.alloc().buffer();
 				Charset charset = Charset.forName("UTF-8");
-				buf.writeCharSequence("3131", charset);                
-                ctx.writeAndFlush(buf);
-            } else if (event.state().equals(IdleState.ALL_IDLE)) {
-                System.out.println("ALL");
-            }
-        }
+				buf.writeCharSequence("3131", charset);
+				ctx.writeAndFlush(buf);
+			} else if (event.state().equals(IdleState.ALL_IDLE)) {
+				System.out.println("ALL");
+			}
+		}
 	}
 
 	@Override
@@ -122,15 +138,28 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 		// TODO Auto-generated method stub
 		super.exceptionCaught(ctx, cause);
 		System.out.println("client exceptionCaught");
-	       System.err.println("异常了...");
-	        //异常断线重连
-	        final EventLoop eventLoop = ctx.channel().eventLoop();
-	        eventLoop.schedule(new Runnable() {
-	            @Override
-	            public void run() {
-	            	mClient.start();
-	            }
-	        }, 1L, TimeUnit.SECONDS);
+		System.err.println("异常了...");
+		// 异常断线重连
+		// final EventLoop eventLoop = ctx.channel().eventLoop();
+		// eventLoop.schedule(new Runnable() {
+		// @Override
+		// public void run() {
+		// mClient.start();
+		// }
+		// }, 1L, TimeUnit.SECONDS);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				mClient.shutdown();
+				if (mClient == null) {
+					System.err.println("掉mClient==null了...");
+					mClient = new Client(ClientCenter.port);
+				}
+
+				mClient.start();
+			}
+		}).start();
 	}
 
 }
