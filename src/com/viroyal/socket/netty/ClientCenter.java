@@ -15,7 +15,7 @@ public class ClientCenter {
 			for (int i = 0; i < a; i++) {
 				Client mClient = new Client(port);
 				mClient.start();
-				mClient.screenSengMessage();
+//				mClient.screenSengMessage();
 			}
 
 		}

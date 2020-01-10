@@ -27,7 +27,6 @@ public class Client {
 	public static int readIdleTime = 60;
 	public static int writeIdleTime = 60;
 	public static int allIdleTime = 60 * 10;
-	public static Scanner scanner = new Scanner(System.in);
 
 	private int Port;
 	private Channel channel;
@@ -129,6 +128,7 @@ public class Client {
 		});
 
 		channel = connect.channel();
+//		screenSengMessage();
 	}
 
 	public void sendMsg(String text) throws Exception {
@@ -150,8 +150,9 @@ public class Client {
 	public void screenSengMessage() {
 		while (true) {
 			System.out.println("«Î ‰»Î");
+			Scanner scanner = new Scanner(System.in);
 			try {
-				sendMsg(scanner.next());
+				sendMsg("aa");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
