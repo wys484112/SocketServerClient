@@ -1,9 +1,11 @@
 package com.viroyal.socket.netty;
 
 import java.nio.charset.Charset;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+import com.viroyal.socket.util.RandomUtil;
 import com.viroyal.socket.util.TextUtils;
 
 import io.netty.buffer.ByteBuf;
@@ -71,13 +73,14 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
 		
 		//定时发送信息给服务器
+		String imei=RandomUtil.RandomCode(10);
 		 final EventLoop eventLoop = ctx.channel().eventLoop();
 		 eventLoop.scheduleAtFixedRate(new Runnable() {
 		 @Override
 		 public void run() {
 				ByteBuf buf = ctx.alloc().buffer();
 				Charset charset = Charset.forName("UTF-8");
-				buf.writeCharSequence("scheduled messages", charset);
+				buf.writeCharSequence("imei:"+imei, charset);
 				ctx.channel().writeAndFlush(buf);
 		 }
 		 }, 1L,5L, TimeUnit.SECONDS);
