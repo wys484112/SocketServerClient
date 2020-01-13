@@ -32,7 +32,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		// TODO Auto-generated method stub
-		System.out.println("channelRead msg==" + TextUtils.byte2HexStr((byte[]) msg));
+		System.out.println("channelRead msg==" + TextUtils.byte2Str((byte[]) msg));
 	}
 
 	@Override
@@ -69,6 +69,19 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 		// ctx.channel().writeAndFlush(scanner.next());
 		// }
 
+		
+		//定时发送信息给服务器
+		 final EventLoop eventLoop = ctx.channel().eventLoop();
+		 eventLoop.scheduleAtFixedRate(new Runnable() {
+		 @Override
+		 public void run() {
+				ByteBuf buf = ctx.alloc().buffer();
+				Charset charset = Charset.forName("UTF-8");
+				buf.writeCharSequence("scheduled messages", charset);
+				ctx.channel().writeAndFlush(buf);
+		 }
+		 }, 1L,5L, TimeUnit.SECONDS);
+		
 	}
 
 	@Override
