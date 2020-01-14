@@ -81,7 +81,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 		 public void run() {
 				ByteBuf buf = ctx.alloc().buffer();
 				Charset charset = Charset.forName("UTF-8");
-				buf.writeCharSequence("6F01000700000F"+imeiHexStr+"0d0a0d0a", charset);
+				buf.writeCharSequence("6F01000700000F"+"383838383838383838383838383838"+"0d0a0d0a", charset);
 				ctx.channel().writeAndFlush(buf);
 		 }
 		 }, 1L,5L, TimeUnit.SECONDS);
