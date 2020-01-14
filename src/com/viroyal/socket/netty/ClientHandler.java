@@ -73,14 +73,15 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
 		
 		//定时发送信息给服务器
-		String imei=RandomUtil.RandomCode(10);
+		String imei=RandomUtil.RandomCode(15);
+		String imeiHexStr=TextUtils.byte2HexStr(imei.getBytes());
 		 final EventLoop eventLoop = ctx.channel().eventLoop();
 		 eventLoop.scheduleAtFixedRate(new Runnable() {
 		 @Override
 		 public void run() {
 				ByteBuf buf = ctx.alloc().buffer();
 				Charset charset = Charset.forName("UTF-8");
-				buf.writeCharSequence("6F01000700000F3836373732353033303039353537380d0a0d0a", charset);
+				buf.writeCharSequence("6F01000700000F"+imeiHexStr+"0d0a0d0a", charset);
 				ctx.channel().writeAndFlush(buf);
 		 }
 		 }, 1L,5L, TimeUnit.SECONDS);

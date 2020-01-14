@@ -10,30 +10,15 @@ public class RandomUtil {
 
     //生成n位的随机数 
     public static String RandomCode(int n) {
-
-        if (n < 1 || n > 11) {
-            throw new IllegalArgumentException("Cannot random " + n + " bit number!");
-        }
-
+        StringBuffer sb = new StringBuffer();
+        String str = "0123456789";
         Random r = new Random();
-        if (n == 1) {
-            return String.valueOf(r.nextInt(10));
+        for(int i=0;i<n;i++){
+            int num = r.nextInt(str.length());
+            sb.append(str.charAt(num));
+//            str = str.replace((str.charAt(num)+""), "");
         }
-
-        int bitField = 0;
-        char[] arr = new char[n];
-        for (int i = 0; i < n; i++) {
-            while (true) {
-                int k = r.nextInt(10);
-                if ((bitField & (1 << k)) == 0) {
-                    bitField |= 1 << k;
-                    arr[i] = (char) (k + '0');
-                    break;
-                }
-            }
-        }
-
-        return new String(arr);
+        return sb.toString();
     }
 
     public static Integer getMySqlKey() {
