@@ -9,6 +9,8 @@ import com.viroyal.socket.util.RandomUtil;
 import com.viroyal.socket.util.TextUtils;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.EventLoop;
@@ -35,6 +37,27 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("channelRead msg==" + TextUtils.byte2Str((byte[]) msg));
+		String  msgHex=TextUtils.byte2Str((byte[]) msg);
+		if(msgHex.substring(6, 8).equals("11")) {  //灯开关
+			
+			ByteBuf buf = ctx.alloc().buffer();
+			Charset charset = Charset.forName("UTF-8");
+			buf.writeCharSequence("6F0101210000123836373732353033303039353537380101000D0A0D0A", charset);
+			ctx.channel().writeAndFlush(buf).addListener(new ChannelFutureListener() {
+				@Override
+				public void operationComplete(ChannelFuture future) throws Exception {
+					// TODO Auto-generated method stub
+					if(future.isSuccess()) {
+						System.out.println("sendMsg 发送成功   channel:"+ctx.channel() +"  textHexStr:"+"6F0101210000123836373732353033303039353537380101000D0A0D0A");        					
+					}else {
+						System.out.println("sendMsg 发送失败   channel:"+ctx.channel() +"  textHexStr:"+"6F0101210000123836373732353033303039353537380101000D0A0D0A");        
+						
+					}
+
+				}
+			});	
+		}
+
 	}
 
 	@Override
@@ -62,7 +85,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 		System.out.println("client channelActive");
 		System.out.println("client xv");
 
-		ctx.writeAndFlush("aaa");
+//		ctx.writeAndFlush("aaa");
 		isActive = true;
 
 		// Scanner scanner = new Scanner(System.in);
@@ -81,10 +104,10 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 		 public void run() {
 				ByteBuf buf = ctx.alloc().buffer();
 				Charset charset = Charset.forName("UTF-8");
-				buf.writeCharSequence("6F01000700000F"+"383838383838383838383838383838"+"0d0a0d0a", charset);
+				buf.writeCharSequence("6F01000101002F383637373235303330303935353738006403E80003E80003E8503203E83804040500010064010304B004B004B004B00D0A0D0A", charset);
 				ctx.channel().writeAndFlush(buf);
 		 }
-		 }, 1L,5L, TimeUnit.SECONDS);
+		 }, 1L,10L, TimeUnit.SECONDS);
 		
 	}
 
