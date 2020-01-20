@@ -12,7 +12,7 @@ public class ClientCenter {
 //
 //		System.out.println("请输入需要启动的客户端数量:");
 //		int a = scanner.nextInt();
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 2; i++) {
 			new Thread(new Runnable() {
 				
 				@Override
