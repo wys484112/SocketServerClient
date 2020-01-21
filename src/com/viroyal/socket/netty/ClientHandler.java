@@ -118,7 +118,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 				
 				ctx.channel().writeAndFlush(buf);
 		 }
-		 }, 1L,30L, TimeUnit.SECONDS);
+		 }, 1L,120L, TimeUnit.SECONDS);
 		
 	}
 
