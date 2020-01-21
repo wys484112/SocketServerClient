@@ -41,7 +41,7 @@ public class ClientCenter {
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-					for (int j = 0; j < 10; j++) {
+					for (int j = 0; j < 1; j++) {
 						Client mClient = new Client(port);
 						mClient.start();
 			            try {
