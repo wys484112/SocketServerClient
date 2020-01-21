@@ -132,30 +132,19 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
 		System.err.println("掉线了...");
 		// 使用过程中断线重连 这个方法不可用，close后 ctx上下文已经消失，无法完成定时任务
-		// final EventLoop eventLoop = ctx.channel().eventLoop();
-		// eventLoop.schedule(new Runnable() {
-		// @Override
-		// public void run() {
-		// mClient.shutdown();
-		// System.err.println("掉mClient==null了...");
-		// mClient = new Client(9100);
-		// mClient.start();
-		// }
-		// }, 0L, TimeUnit.SECONDS);
-
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				mClient.shutdown();
-				if (mClient == null) {
-					System.err.println("掉mClient==null了...");
-					mClient = new Client(ClientCenter.port);
-				}
-
-				mClient.start();
-			}
-		}).start();
+//		new Thread(new Runnable() {
+//			@Override
+//			public void run() {
+//				// TODO Auto-generated method stub
+//				mClient.shutdown();
+//				if (mClient == null) {
+//					System.err.println("掉mClient==null了...");
+//					mClient = new Client(ClientCenter.port);
+//				}
+//
+//				mClient.start();
+//			}
+//		}).start();
 
 		ctx.close();
 
@@ -175,10 +164,10 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 			} else if (event.state().equals(IdleState.WRITER_IDLE)) {
 				System.out.println("长期未向服务器发送数据");
 				// 发送心跳包
-				ByteBuf buf = ctx.alloc().buffer();
-				Charset charset = Charset.forName("UTF-8");
-				buf.writeCharSequence("3131", charset);
-				ctx.writeAndFlush(buf);
+//				ByteBuf buf = ctx.alloc().buffer();
+//				Charset charset = Charset.forName("UTF-8");
+//				buf.writeCharSequence("3131", charset);
+//				ctx.writeAndFlush(buf);
 			} else if (event.state().equals(IdleState.ALL_IDLE)) {
 				System.out.println("ALL");
 			}
@@ -192,26 +181,19 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 		System.out.println("client exceptionCaught");
 		System.err.println("异常了...");
 		// 异常断线重连
-		// final EventLoop eventLoop = ctx.channel().eventLoop();
-		// eventLoop.schedule(new Runnable() {
-		// @Override
-		// public void run() {
-		// mClient.start();
-		// }
-		// }, 1L, TimeUnit.SECONDS);
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				mClient.shutdown();
-				if (mClient == null) {
-					System.err.println("掉mClient==null了...");
-					mClient = new Client(ClientCenter.port);
-				}
-
-				mClient.start();
-			}
-		}).start();
+//		new Thread(new Runnable() {
+//			@Override
+//			public void run() {
+//				// TODO Auto-generated method stub
+//				mClient.shutdown();
+//				if (mClient == null) {
+//					System.err.println("掉mClient==null了...");
+//					mClient = new Client(ClientCenter.port);
+//				}
+//
+//				mClient.start();
+//			}
+//		}).start();
 	}
 
 }

@@ -15,10 +15,14 @@ public class ClientCenter {
 //
 //		System.out.println("请输入需要启动的客户端数量:");
 //		int a = scanner.nextInt();
-//		for (int i = 0; i < 100; i++) {
+//		for (int j = 0; j < 3; j++) {
 //			Client mClient = new Client(port);
 //			mClient.start();
-//
+//            try {
+//            Thread.sleep(5 * 1000);
+//        } catch (InterruptedException e) {
+//            return;
+//        }
 //			
 //		}
 	       /*
@@ -37,13 +41,16 @@ public class ClientCenter {
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-					Client mClient = new Client(port);
-					mClient.start();
-		            try {
-		                Thread.sleep(5 * 1000);
-		            } catch (InterruptedException e) {
-		                return;
-		            }
+					for (int j = 0; j < 6; j++) {
+						Client mClient = new Client(port);
+						mClient.start();
+			            try {
+			            Thread.sleep(5 * 1000);
+			        } catch (InterruptedException e) {
+			            return;
+			        }
+						
+					}
 				}
 			});  //线程执行完毕返回一个future对象
         }

@@ -128,7 +128,7 @@ public class Client {
 		});
 
 		channel = connect.channel();
-		screenSengMessage();
+//		screenSengMessage();
 	}
 
 	public void sendMsg(String text) throws Exception {
