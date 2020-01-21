@@ -99,12 +99,11 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 		//定时发送信息给服务器
 		System.out.println("client imeiHexStr=="+imeiHexStr);
 
-		ByteBuf buf = ctx.alloc().buffer();
-		Charset charset = Charset.forName("UTF-8");
-//		buf.writeCharSequence("6F01000101002F"+"383637373235303330303935353738"+"006403E80003E80003E8503203E83804040500010064010304B004B004B004B00D0A0D0A", charset);
-		buf.writeCharSequence("6F01000101002F"+imeiHexStr+"006403E80003E80003E8503203E83804040500010064010304B004B004B004B00D0A0D0A", charset);
-		
-		ctx.channel().writeAndFlush(buf);
+//		ByteBuf buf = ctx.alloc().buffer();
+//		Charset charset = Charset.forName("UTF-8");
+////		buf.writeCharSequence("6F01000101002F"+"383637373235303330303935353738"+"006403E80003E80003E8503203E83804040500010064010304B004B004B004B00D0A0D0A", charset);
+//		buf.writeCharSequence("6F01000101002F"+imeiHexStr+"006403E80003E80003E8503203E83804040500010064010304B004B004B004B00D0A0D0A", charset);		
+//		ctx.channel().writeAndFlush(buf);
 		
 		 final EventLoop eventLoop = ctx.channel().eventLoop();
 		 eventLoop.scheduleAtFixedRate(new Runnable() {
@@ -119,7 +118,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 				
 				ctx.channel().writeAndFlush(buf);
 		 }
-		 }, 1L,30L, TimeUnit.SECONDS);
+		 }, 1L,3000L, TimeUnit.SECONDS);
 		
 	}
 
