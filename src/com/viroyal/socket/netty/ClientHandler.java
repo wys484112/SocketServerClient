@@ -49,9 +49,9 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 				public void operationComplete(ChannelFuture future) throws Exception {
 					// TODO Auto-generated method stub
 					if(future.isSuccess()) {
-						System.out.println("sendMsg 发送成功   channel:"+ctx.channel() +"  textHexStr:"+"6F0101210000123836373732353033303039353537380101000D0A0D0A");        					
+						System.out.println("sendMsg 发送成功   channel:"+ctx.channel().localAddress() +"  textHexStr:"+"6F0101210000123836373732353033303039353537380101000D0A0D0A");        					
 					}else {
-						System.out.println("sendMsg 发送失败   channel:"+ctx.channel() +"  textHexStr:"+"6F0101210000123836373732353033303039353537380101000D0A0D0A");        
+						System.out.println("sendMsg 发送失败   channel:"+ctx.channel().localAddress() +"  textHexStr:"+"6F0101210000123836373732353033303039353537380101000D0A0D0A");        
 						
 					}
 
@@ -110,6 +110,8 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 		 eventLoop.scheduleAtFixedRate(new Runnable() {
 		 @Override
 		 public void run() {
+				System.out.println("client channel"+ctx.channel().localAddress());
+
 				ByteBuf buf = ctx.alloc().buffer();
 				Charset charset = Charset.forName("UTF-8");
 //				buf.writeCharSequence("6F01000101002F"+"383637373235303330303935353738"+"006403E80003E80003E8503203E83804040500010064010304B004B004B004B00D0A0D0A", charset);
