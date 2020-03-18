@@ -125,25 +125,27 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		// TODO Auto-generated method stub
-		super.channelInactive(ctx);
 		System.out.println("client channelInactive");
 		isActive = false;
 
 		System.err.println("掉线了...");
 		// 使用过程中断线重连 这个方法不可用，close后 ctx上下文已经消失，无法完成定时任务
-//		new Thread(new Runnable() {
-//			@Override
-//			public void run() {
-//				// TODO Auto-generated method stub
-//				mClient.shutdown();
-//				if (mClient == null) {
-//					System.err.println("掉mClient==null了...");
-//					mClient = new Client(ClientCenter.port);
-//				}
-//
-//				mClient.start();
-//			}
-//		}).start();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				mClient.shutdown();
+				if (mClient == null) {
+					System.err.println("掉mClient==null了...");
+					mClient = new Client(ClientCenter.port);
+				}
+
+				mClient.start();
+			}
+		}).start();
+		
+		
+		super.channelInactive(ctx);
 
 		ctx.close();
 

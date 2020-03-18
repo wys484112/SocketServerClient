@@ -15,7 +15,7 @@ public class ClientCenter {
 //
 //		System.out.println("请输入需要启动的客户端数量:");
 //		int a = scanner.nextInt();
-		for (int j = 0; j < 3; j++) {
+		for (int j = 0; j < 1; j++) {
 			Client mClient = new Client(port);
 			mClient.start();
             try {
